@@ -13,12 +13,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
     var locationManager: CLLocationManager!
     
+    @IBOutlet weak var AccuracyLabel: UILabel!
+    @IBOutlet weak var DistanceLabel: UILabel!
+    @IBOutlet weak var UuidLabel: UILabel!
+   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
+        
+        AccuracyLabel.textColor = UIColor.white
+        DistanceLabel.textColor = UIColor.white
+        UuidLabel.textColor = UIColor.white
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -40,6 +49,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+        
+        AccuracyLabel.text = String(beacons[0].accuracy)
+        UuidLabel.text = beacons[0].proximityUUID.uuidString
+        
+        //Update bg colors
         if beacons.count > 0 {
             updateDistance(beacons[0].proximity)
         } else {
@@ -52,15 +66,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             switch distance {
             case .unknown:
                 self.view.backgroundColor = UIColor.gray
-                
+                self.DistanceLabel.text = "UNKOWN"
             case .far:
                 self.view.backgroundColor = UIColor.blue
-                
+                self.DistanceLabel.text = "FAR"
             case .near:
                 self.view.backgroundColor = UIColor.orange
-                
+                self.DistanceLabel.text = "NEAR"
             case .immediate:
                 self.view.backgroundColor = UIColor.red
+                self.DistanceLabel.text = "IMMEDIATE"
             }
         }
     }
